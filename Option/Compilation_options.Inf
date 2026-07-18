@@ -1,0 +1,5 @@
+# This is a file that stores compilation options, proceed with caution.
+# NASM
+-f bin
+# GCC
+x86_64-elf-gcc -m32 -ffreestanding -nostdinc -nostdlib -fno-pic -I./Include -Wl,-T,Option\linker.ld -Wl,-s -Wl,-m,elf_i386

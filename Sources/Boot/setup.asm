@@ -1,0 +1,40 @@
+bits 16;实模式
+org 0x7C00;0x7c00引导扇区的内存地址
+section .text
+    global _start
+_start:
+    mov ax,0x1000;设置堆栈段地址
+    mov ss,ax
+    mov sp,0x0000;设置堆栈顶地址
+
+    sti
+    
+    mov ax,0x0003;设置为80x25文本模式
+    int 0x10
+
+    mov ax,0x0000;初始化段寄存器
+    mov ds,ax
+    mov es,ax
+    jmp 0x0:_move
+_move:
+    mov dx,0x0080
+    mov cx,0x0002
+    mov bx,0x5000
+    mov ax,0x0208
+    int 0x13
+    jmp 0x0:0x5000
+    jmp _error
+_error:
+    ;错误处理
+    mov ax,0x1301
+    mov bx,0x0004
+    mov dx,0x0100
+    mov bp,msg1
+    mov cx,13
+    int 0x10
+    jmp _move
+msg1 db 'Loaded error!'
+times 0x1BE - ($ - $$) db 0
+db 0x00,0x20,0x21,0x00,0x0C,0x5E,0x38,0x26,0x00,0x08,0x00,0x00,0x00,0x60,0x09,0x00
+times 510 - ($ - $$) db 0
+dw 0xAA55;引导扇区标志
